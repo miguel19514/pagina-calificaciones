@@ -1,0 +1,29 @@
+# Credenciales y configuración sensible
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+
+# VS Code
+.vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Base de datos local (por si usamos sqlite en pruebas)
+*.db
+*.sqlite3
