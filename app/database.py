@@ -8,8 +8,7 @@ load_dotenv()
 
 def get_connection():
     """
-    Crea y retorna una conexión a la base de datos.
-    Se llama cada vez que necesitamos hablar con PostgreSQL.
+    Crea y retorna una conexión a la base de datos
     """
     connection = psycopg2.connect(
         host=os.getenv('DB_HOST'),
