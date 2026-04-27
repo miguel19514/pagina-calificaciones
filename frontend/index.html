@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Escolar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: #1a1a1a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8f7f4;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background: #1a1a1a;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .nav-items {
+            display: flex;
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #ccc;
+            font-size: 13px;
+            padding: 0 20px;
+            height: 64px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.15s, background 0.15s;
+            font-family: inherit;
+            letter-spacing: 0.03em;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-dropdown.open .nav-btn {
+            color: #fff;
+            border-bottom: 2px solid #fff;
+        }
+
+        .arrow {
+            width: 8px;
+            height: 8px;
+            border-right: 1.5px solid currentColor;
+            border-bottom: 1.5px solid currentColor;
+            transform: rotate(45deg) translateY(-2px);
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .nav-dropdown.open .arrow {
+            transform: rotate(-135deg) translateY(-2px);
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #fff;
+            min-width: 210px;
+            z-index: 100;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+        }
+
+        .nav-dropdown.open .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-section {
+            padding: 8px 0;
+            border-bottom: 0.5px solid #e0e0e0;
+        }
+
+        .dropdown-section:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-section-label {
+            padding: 6px 16px 4px;
+            font-size: 10px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            font-size: 13px;
+            color: #1a1a1a;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+            transition: background 0.1s;
+        }
+
+        .dropdown-item:hover {
+            background: #f0f0f0;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dot-green {
+            background: #639922;
+        }
+
+        .dot-blue {
+            background: #378ADD;
+        }
+
+        .dot-amber {
+            background: #BA7517;
+        }
+
+        /* ── MAIN ── */
+        .main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .breadcrumb-sep {
+            color: #bbb;
+        }
+
+        .breadcrumb-current {
+            color: #333;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+
+        .page-subtitle {
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* ── BOTONES ── */
+        .primary-btn {
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .primary-btn:hover {
+            background: #333;
+        }
+
+        .primary-btn:active {
+            background: #555;
+            transform: scale(0.98);
+        }
+
+        .row-btn {
+            background: #f5f5f5;
+            border: 0.5px solid #d0d0d0;
+            border-radius: 4px;
+            padding: 6px 14px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #1a1a1a;
+            font-family: inherit;
+            font-weight: 500;
+            transition: background 0.1s, border-color 0.1s;
+        }
+
+        .row-btn:hover {
+            background: #e8e8e8;
+            border-color: #bbb;
+        }
+
+        .row-btn.danger {
+            background: #fff0f0;
+            border-color: #f0b0b0;
+            color: #A32D2D;
+        }
+
+        .row-btn.danger:hover {
+            background: #FCEBEB;
+            border-color: #F09595;
+        }
+
+        /* ── STATS ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #fff;
+            border: 0.5px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+
+        .stat-sub {
+            font-size: 12px;
+            color: #777;
+            margin-top: 2px;
+        }
+
+        /* ── TABLA ── */
+        .table-card {
+            background: #fff;
+            border: 0.5px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 0.5px solid #ebebeb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+
+        .search-input {
+            border: 0.5px solid #ddd;
+            border-radius: 6px;
+            padding: 7px 12px;
+            font-size: 13px;
+            outline: none;
+            font-family: inherit;
+            width: 220px;
+            background: #fafafa;
+            color: #1a1a1a;
+        }
+
+        .search-input:focus {
+            border-color: #aaa;
+            background: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 10px 1.25rem;
+            text-align: left;
+            font-size: 11px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 0.5px solid #ebebeb;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 13px 1.25rem;
+            font-size: 13px;
+            color: #1a1a1a;
+            border-bottom: 0.5px solid #f5f5f5;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #fafafa;
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        /* ── BADGES ── */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-green {
+            background: #EAF3DE;
+            color: #3B6D11;
+        }
+
+        .badge-red {
+            background: #FCEBEB;
+            color: #A32D2D;
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 10px;
+            padding: 2rem;
+            width: 480px;
+            max-width: 90%;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            border: 0.5px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #1a1a1a;
+            outline: none;
+            background: #fafafa;
+        }
+
+        .form-input:focus {
+            border-color: #aaa;
+            background: #fff;
+        }
+
+        .form-select {
+            width: 100%;
+            border: 0.5px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #1a1a1a;
+            outline: none;
+            background: #fafafa;
+            cursor: pointer;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .cancel-btn {
+            background: #f5f5f5;
+            border: 0.5px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            color: #1a1a1a;
+            transition: background 0.1s;
+        }
+
+        .cancel-btn:hover {
+            background: #e8e8e8;
+        }
+
+        /* ── VISTAS ── */
+        .vista {
+            display: none;
+        }
+
+        .vista.activa {
+            display: block;
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <span class="navbar-brand">Gestión Escolar</span>
+        <div class="nav-items">
+
+            <div class="nav-dropdown" id="dd-salones">
+                <button class="nav-btn" onclick="toggleMenu('dd-salones')">Salones <span class="arrow"></span></button>
+                <div class="dropdown-menu">
+                    <div class="dropdown-section">
+                        <div class="dropdown-section-label">Gestión</div>
+                        <button class="dropdown-item" onclick="mostrarVista('salones')"><span
+                                class="dot dot-blue"></span>Ver todos los salones</button>
+                        <button class="dropdown-item" onclick="abrirModal('modal-salon')"><span
+                                class="dot dot-blue"></span>Nuevo salón</button>
+                    </div>
+                    <div class="dropdown-section">
+                        <div class="dropdown-section-label">Materias</div>
+                        <button class="dropdown-item" onclick="mostrarVista('materias')"><span
+                                class="dot dot-amber"></span>Gestionar materias</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-dropdown" id="dd-alumnos">
+                <button class="nav-btn" onclick="toggleMenu('dd-alumnos')">Alumnos <span class="arrow"></span></button>
+                <div class="dropdown-menu">
+                    <div class="dropdown-section">
+                        <div class="dropdown-section-label">Gestión</div>
+                        <button class="dropdown-item" onclick="mostrarVista('alumnos')"><span
+                                class="dot dot-green"></span>Ver todos los alumnos</button>
+                        <button class="dropdown-item" onclick="abrirModal('modal-alumno')"><span
+                                class="dot dot-green"></span>Nuevo alumno</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-dropdown" id="dd-calificaciones">
+                <button class="nav-btn" onclick="toggleMenu('dd-calificaciones')">Calificaciones <span
+                        class="arrow"></span></button>
+                <div class="dropdown-menu">
+                    <div class="dropdown-section">
+                        <div class="dropdown-section-label">Consulta</div>
+                        <button class="dropdown-item" onclick="mostrarVista('calificaciones')"><span
+                                class="dot dot-blue"></span>Ver calificaciones</button>
+                    </div>
+                    <div class="dropdown-section">
+                        <div class="dropdown-section-label">Registro</div>
+                        <button class="dropdown-item" onclick="abrirModal('modal-calificacion')"><span
+                                class="dot dot-amber"></span>Registrar calificación</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main">
+
+        <!-- ── VISTA INICIO ── -->
+        <div id="vista-inicio" class="vista activa">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Bienvenido</p>
+                    <p class="page-subtitle">Selecciona una opción del menú para comenzar</p>
+                </div>
+            </div>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-label">Total alumnos</div>
+                    <div class="stat-value" id="stat-alumnos">—</div>
+                    <div class="stat-sub">registrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Salones</div>
+                    <div class="stat-value" id="stat-salones">—</div>
+                    <div class="stat-sub">activos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Materias</div>
+                    <div class="stat-value" id="stat-materias">—</div>
+                    <div class="stat-sub">registradas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── VISTA SALONES ── -->
+        <div id="vista-salones" class="vista">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Salones</p>
+                    <p class="page-subtitle">Gestiona los salones del sistema</p>
+                </div>
+                <button class="primary-btn" onclick="abrirModal('modal-salon')">+ Nuevo salón</button>
+            </div>
+            <div class="table-card">
+                <div class="table-header">
+                    <span class="table-title">Lista de salones</span>
+                    <input class="search-input" placeholder="Buscar salón..."
+                        oninput="filtrarTabla(this, 'tabla-salones')" />
+                </div>
+                <table id="tabla-salones">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Grado</th>
+                            <th>Turno</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-salones">
+                        <tr>
+                            <td colspan="4" class="empty-state">Cargando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── VISTA ALUMNOS ── -->
+        <div id="vista-alumnos" class="vista">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Alumnos</p>
+                    <p class="page-subtitle">Gestiona los alumnos registrados en el sistema</p>
+                </div>
+                <button class="primary-btn" onclick="abrirModal('modal-alumno')">+ Nuevo alumno</button>
+            </div>
+            <div class="table-card">
+                <div class="table-header">
+                    <span class="table-title">Lista de alumnos</span>
+                    <input class="search-input" placeholder="Buscar por nombre o matrícula..."
+                        oninput="filtrarTabla(this, 'tabla-alumnos')" />
+                </div>
+                <table id="tabla-alumnos">
+                    <thead>
+                        <tr>
+                            <th>Matrícula</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Salón</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-alumnos">
+                        <tr>
+                            <td colspan="5" class="empty-state">Cargando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── VISTA MATERIAS ── -->
+        <div id="vista-materias" class="vista">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Materias</p>
+                    <p class="page-subtitle">Gestiona las materias del sistema</p>
+                </div>
+                <button class="primary-btn" onclick="abrirModal('modal-materia')">+ Nueva materia</button>
+            </div>
+            <div class="table-card">
+                <div class="table-header">
+                    <span class="table-title">Lista de materias</span>
+                    <input class="search-input" placeholder="Buscar materia..."
+                        oninput="filtrarTabla(this, 'tabla-materias')" />
+                </div>
+                <table id="tabla-materias">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Mínimo aprobatorio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-materias">
+                        <tr>
+                            <td colspan="3" class="empty-state">Cargando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── VISTA CALIFICACIONES ── -->
+        <div id="vista-calificaciones" class="vista">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Calificaciones</p>
+                    <p class="page-subtitle">Consulta y registra calificaciones por salón</p>
+                </div>
+                <button class="primary-btn" onclick="abrirModal('modal-calificacion')">+ Registrar calificación</button>
+            </div>
+            <div class="table-card">
+                <div class="table-header">
+                    <span class="table-title">Lista de calificaciones</span>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <select id="selector-salon-cal" onchange="cambiarSalon(this.value)"
+                            style="border:0.5px solid #ddd; border-radius:6px; padding:7px 12px; font-size:13px; outline:none; font-family:inherit; width:180px; background:#fafafa; color:#1a1a1a; cursor:pointer;">
+                            <option value="">Seleccionar salón...</option>
+                        </select>
+                        <input class="search-input" placeholder="Buscar alumno..."
+                            oninput="filtrarTabla(this, 'tabla-calificaciones')" />
+                    </div>
+                </div>
+                <table id="tabla-calificaciones">
+                    <thead>
+                        <tr>
+                            <th>Alumno</th>
+                            <th>Materia</th>
+                            <th>Calificación</th>
+                            <th>Periodo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-calificaciones">
+                        <tr>
+                            <td colspan="6" class="empty-state">Selecciona un salón para ver las calificaciones</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── MODALES ── -->
+
+    <!-- Modal Salón -->
+    <div class="modal-overlay" id="modal-salon">
+        <div class="modal">
+            <p class="modal-title" id="titulo-modal-salon">Nuevo salón</p>
+            <div class="form-group">
+                <label class="form-label">Nombre</label>
+                <input class="form-input" id="salon-nombre" placeholder="Ej: 3A" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Grado</label>
+                <input class="form-input" id="salon-grado" placeholder="Ej: Tercero" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Turno</label>
+                <select class="form-select" id="salon-turno">
+                    <option value="matutino">Matutino</option>
+                    <option value="vespertino">Vespertino</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="cerrarModal('modal-salon')">Cancelar</button>
+                <button class="primary-btn" onclick="guardarSalon()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Alumno -->
+    <div class="modal-overlay" id="modal-alumno">
+        <div class="modal">
+            <p class="modal-title" id="titulo-modal-alumno">Nuevo alumno</p>
+            <div class="form-group">
+                <label class="form-label">Nombre</label>
+                <input class="form-input" id="alumno-nombre" placeholder="Nombre" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Apellido</label>
+                <input class="form-input" id="alumno-apellido" placeholder="Apellido" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Matrícula</label>
+                <input class="form-input" id="alumno-matricula" placeholder="Ej: 2024001" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Salón</label>
+                <select class="form-select" id="alumno-salon"></select>
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="cerrarModal('modal-alumno')">Cancelar</button>
+                <button class="primary-btn" onclick="guardarAlumno()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Materia -->
+    <div class="modal-overlay" id="modal-materia">
+        <div class="modal">
+            <p class="modal-title">Nueva materia</p>
+            <div class="form-group">
+                <label class="form-label">Nombre</label>
+                <input class="form-input" id="materia-nombre" placeholder="Ej: Matemáticas" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mínimo aprobatorio</label>
+                <input class="form-input" id="materia-min" type="number" value="70" min="0" max="100" />
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="cerrarModal('modal-materia')">Cancelar</button>
+                <button class="primary-btn" onclick="guardarMateria()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Calificación -->
+    <div class="modal-overlay" id="modal-calificacion">
+        <div class="modal">
+            <p class="modal-title">Registrar calificación</p>
+            <div class="form-group">
+                <label class="form-label">Alumno</label>
+                <select class="form-select" id="cal-alumno"></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Materia</label>
+                <select class="form-select" id="cal-materia"></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Calificación</label>
+                <input class="form-input" id="cal-calificacion" type="number" min="0" max="100" placeholder="0 - 100" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Periodo</label>
+                <input class="form-input" id="cal-periodo" placeholder="Ej: 2024-1" />
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="cerrarModal('modal-calificacion')">Cancelar</button>
+                <button class="primary-btn" onclick="guardarCalificacion()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
